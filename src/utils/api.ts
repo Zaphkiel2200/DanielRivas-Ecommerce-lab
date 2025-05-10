@@ -1,13 +1,13 @@
-import { cacheData, getCachedData } from './cache';
-
-const API_URL = 'https://api.jikan.moe/v4/random/anime';
-
-export const fetchAnimeProducts = async (count: number = 10): Promise<any[]> => {
-    const products = [];
+export const fetchRandomAnimes = async (count: number = 6): Promise<any[]> => {
+    const promises = [];
+    
     for (let i = 0; i < count; i++) {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        products.push(data.data);
+        promises.push(
+            fetch('https://api.jikan.moe/v4/random/anime')
+                .then(response => response.json())
+                .then(data => data.data)
+        );
     }
-    return products;
+    
+    return Promise.all(promises);
 };
