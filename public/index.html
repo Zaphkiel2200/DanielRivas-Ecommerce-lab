@@ -11,7 +11,7 @@
         <div class="header-content">
             <h1 class="logo">Mundo Anime</h1>
             <button id="cart-btn" class="cart-btn">
-                🛒 Carrito
+                🛒 Carrito <span id="cart-count">0</span>
             </button>
         </div>
     </header>
@@ -26,10 +26,11 @@
         
         <button id="explore-btn" class="explore-btn">Explorar</button>
         
-        <div id="anime-grid" class="anime-grid">
-        </div>
+        <div id="anime-grid" class="anime-grid"></div>
     </main>
 
-    <script src=""></script>
+    <cart-popup></cart-popup>
+
+    <script src="../src/index.ts" type="module"></script>
 </body>
 </html>

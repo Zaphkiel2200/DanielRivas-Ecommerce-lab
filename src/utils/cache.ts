@@ -1,4 +1,3 @@
-// Estrategia 1: Cache First
 export const cacheFirst = async (key: string, fetchFn: () => Promise<any>) => {
     const cachedData = getCachedData(key);
     if (cachedData) return cachedData;
@@ -8,7 +7,6 @@ export const cacheFirst = async (key: string, fetchFn: () => Promise<any>) => {
     return freshData;
 };
 
-// Estrategia 2: Stale-While-Revalidate
 export const staleWhileRevalidate = async (key: string, fetchFn: () => Promise<any>) => {
     const cachedData = getCachedData(key);
     if (cachedData) {
@@ -20,7 +18,6 @@ export const staleWhileRevalidate = async (key: string, fetchFn: () => Promise<a
     return freshData;
 };
 
-// Funciones auxiliares
 export const cacheData = (key: string, data: any) => {
     localStorage.setItem(key, JSON.stringify({
         data,
