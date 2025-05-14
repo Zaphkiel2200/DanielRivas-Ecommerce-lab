@@ -1,13 +1,13 @@
-import AppRoot from './components/AppRoot';
-import LandingPage from './components/LandingPage';
-import CartPage from './components/CartPage';
+import Root from "./Root/Root";
+import Header from "./components/Header/Header";
+import LandingPage from "./pages/LandingPage";
+import CartPage from "./pages/CartPage";
+import AnimeCard from "./components/AnimeCard/AnimeCard";
 
-customElements.define('app-root', AppRoot);
+customElements.define('root-element', Root);
+
+customElements.define('header-element', Header);
+customElements.define('anime-card', AnimeCard);
+
 customElements.define('landing-page', LandingPage);
 customElements.define('cart-page', CartPage);
-
-document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname;
-    const initialPage = path === '/cart' ? 'cart' : 'landing';
-    document.body.innerHTML = '<app-root page="' + initialPage + '"></app-root>';
-});

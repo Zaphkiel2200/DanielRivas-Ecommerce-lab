@@ -1,5 +1,3 @@
-import store from '../../state/store';
-
 class CartPage extends HTMLElement {
     constructor() {
         super();
@@ -8,25 +6,30 @@ class CartPage extends HTMLElement {
 
     connectedCallback() {
         this.render();
-        this.unsubscribe = store.subscribe(() => this.render());
-    }
-
-    disconnectedCallback() {
-        this.unsubscribe?.();
+        window.addEventListener('cart-updated', () => this.render());
     }
 
     render() {
-        const state = store.getState();
+        const cartItems = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        
         this.shadowRoot!.innerHTML = `
             <style>
-                .cart-container {
+                :host {
+                    display: block;
                     padding: 20px;
+                    font-family: Arial, sans-serif;
+                }
+                h2 {
+                    color: #333;
+                    text-align: center;
                 }
                 .cart-item {
                     display: flex;
+                    align-items: center;
                     margin-bottom: 15px;
-                    border-bottom: 1px solid #eee;
-                    padding-bottom: 15px;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
                 }
                 .cart-item img {
                     width: 80px;
@@ -34,36 +37,50 @@ class CartPage extends HTMLElement {
                     object-fit: cover;
                     margin-right: 15px;
                 }
-                .back-btn {
-                    margin: 20px;
-                    padding: 10px 15px;
-                    background: #1a1a2e;
+                .cart-item-info {
+                    flex-grow: 1;
+                }
+                .cart-item-title {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                }
+                .empty-cart {
+                    text-align: center;
+                    color: #666;
+                    margin-top: 50px;
+                }
+                .back-button {
+                    display: block;
+                    margin: 20px auto;
+                    padding: 10px 20px;
+                    background-color: #6c757d;
                     color: white;
                     border: none;
                     border-radius: 4px;
                     cursor: pointer;
                 }
-            </style>
-            <div class="cart-container">
-                <button class="back-btn">← Volver a Animes</button>
-                <h2>Tu Carrito</h2>
-                ${state.cart.length > 0 ? 
-                    state.cart.map(item => `
-                        <div class="cart-item">
-                            <img src="${item.images.jpg.image_url}" alt="${item.title}">
-                            <div>
-                                <h3>${item.title}</h3>
-                                <p>Cantidad: ${item.quantity}</p>
-                            </div>
-                        </div>
-                    `).join('') :
-                    '<p>El carrito está vacío</p>'
+                .back-button:hover {
+                    background-color: #5a6268;
                 }
-            </div>
+            </style>
+            <h2>Tu Carrito de Anime</h2>
+            ${cartItems.length > 0 ? 
+                cartItems.map(item => `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.title}">
+                        <div class="cart-item-info">
+                            <div class="cart-item-title">${item.title}</div>
+                            <div>⭐ ${item.score}</div>
+                        </div>
+                    </div>
+                `).join('') : 
+                '<div class="empty-cart">No hay items en tu carrito</div>'
+            }
+            <button class="back-button" id="back-to-landing">Volver a la tienda</button>
         `;
 
-        this.shadowRoot!.querySelector('.back-btn')?.addEventListener('click', () => {
-            Navigate('landing');
+        this.shadowRoot!.getElementById('back-to-landing')?.addEventListener('click', () => {
+            Navigate('/');
         });
     }
 }
