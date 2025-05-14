@@ -1,11 +1,18 @@
-export class MovieCard extends HTMLElement {
+import { addToCart } from '../../state/actions';
+import store from '../../state/store';
+
+class MovieCard extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
     }
 
     connectedCallback() {
-        const movie = JSON.parse(this.getAttribute('movie') || '{}');
+        const movie = JSON.parse(this.getAttribute('movie') || {};
+        this.render(movie);
+    }
+
+    render(movie: any) {
         this.shadowRoot!.innerHTML = `
             <style>
                 .card {
@@ -26,7 +33,7 @@ export class MovieCard extends HTMLElement {
                     padding: 15px;
                 }
                 .add-to-cart {
-                    background: #e94560;
+                    background: #0f3460;
                     color: white;
                     border: none;
                     padding: 8px 15px;
@@ -45,12 +52,9 @@ export class MovieCard extends HTMLElement {
         `;
 
         this.shadowRoot!.querySelector('.add-to-cart')?.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('add-to-cart', {
-                detail: movie,
-                bubbles: true
-            }));
+            store.dispatch(addToCart(movie));
         });
     }
 }
 
-customElements.define('movie-card', MovieCard);
+export default MovieCard;
