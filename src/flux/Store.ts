@@ -1,144 +1,65 @@
-import { CartActionTypes, StoreActionTypes } from "../flux/Actions";
-import { AppDispatcher, Action } from "./Dispatcher";
-import { Anime } from "../types/types";
-
-export type State = {
-  count: number;
-  cartItems: number[];
-  storeName: string;
-  animes: Anime[];
-  currentPage: string;
-};
-
-type Listener = (state: State) => void;
+import { AppState, Anime } from "../types/types";
+import { Dispatcher } from "./Dispatcher";
 
 class Store {
-  private _myState: State = {
-    count: 0,
-    cartItems: [],
-    storeName: "Anime Store",
-    animes: [],
-    currentPage: "home",
-  };
-
-  private _listeners: Listener[] = [];
+  private state: AppState;
+  private listeners: (() => void)[] = [];
 
   constructor() {
-    AppDispatcher.register(this._handleActions.bind(this));
-    this.load();
+    this.state = {
+      animes: [],
+      cart: JSON.parse(localStorage.getItem('cart') || [],
+      currentPage: 'catalog'
+    };
+    
+    Dispatcher.register(this.handleActions.bind(this));
   }
 
-  load() {
-    const savedState = localStorage.getItem("animeStoreState");
-    if (savedState) {
-      try {
-        const parsedState = JSON.parse(savedState);
-        this._myState = {
-          ...this._myState,
-          ...parsedState,
-        };
-        this._emitChange();
-      } catch (error) {
-        console.error("Error loading state:", error);
-      }
-    }
-  }
-
-  getState(): State {
-    return this._myState;
-  }
-
-  private _handleActions(action: Action): void {
+  private handleActions(action: any) {
     switch (action.type) {
-      case CartActionTypes.TOGGLE_CART:
-        if (
-          typeof action.payload === "string" ||
-          typeof action.payload === "number"
-        ) {
-          const animeId = Number(action.payload);
-          const currentItems = this._myState.cartItems || [];
-          const itemIndex = currentItems.indexOf(animeId);
-
-          if (itemIndex === -1) {
-            this._myState = {
-              ...this._myState,
-              cartItems: [...currentItems, animeId],
-            };
-          } else {
-            this._myState = {
-              ...this._myState,
-              cartItems: currentItems.filter((id) => id !== animeId),
-            };
-          }
-          this._emitChange();
-        }
+      case 'LOAD_ANIMES':
+        this.state = { ...this.state, animes: action.payload };
         break;
-
-      case StoreActionTypes.LOAD_STATE:
-        if (typeof action.payload === "object") {
-          this._myState = {
-            ...this._myState,
-            ...action.payload,
+      case 'ADD_TO_CART':
+        const animeToAdd = this.state.animes.find(a => a.id.toString() === action.payload);
+        if (animeToAdd) {
+          this.state = { 
+            ...this.state, 
+            cart: [...this.state.cart, animeToAdd] 
           };
-          this._emitChange();
+          localStorage.setItem('cart', JSON.stringify(this.state.cart));
         }
         break;
-
-      case StoreActionTypes.UPDATE_STORE_NAME:
-        if (typeof action.payload === "string") {
-          this._myState = {
-            ...this._myState,
-            storeName: action.payload,
-          };
-          this._emitChange();
-        }
-        break;
-
-      case StoreActionTypes.LOAD_ANIMES:
-        if (Array.isArray(action.payload)) {
-          this._myState = {
-            ...this._myState,
-            animes: action.payload,
-          };
-          this._emitChange();
-        }
-        break;
-
-      case StoreActionTypes.NAVIGATE:
-        if (typeof action.payload === "string") {
-          this._myState = {
-            ...this._myState,
-            currentPage: action.payload,
-          };
-          this._emitChange();
-        }
-        break;
-        
-        case CartActionTypes.CLEAR_CART:
-        this._myState = {
-          ...this._myState,
-          cartItems: [],
+      case 'REMOVE_FROM_CART':
+        this.state = { 
+          ...this.state, 
+          cart: this.state.cart.filter(item => item.id.toString() !== action.payload) 
         };
-        this._emitChange();
+        localStorage.setItem('cart', JSON.stringify(this.state.cart));
         break;
+      case 'NAVIGATE':
+        this.state = { ...this.state, currentPage: action.payload };
+        break;
+      default:
+        return;
     }
+    this.notifyListeners();
   }
 
-  private _emitChange(): void {
-    const state = this.getState();
-    localStorage.setItem("animeStoreState", JSON.stringify(state));
-    for (const listener of this._listeners) {
-      listener(state);
-    }
+  public getState(): AppState {
+    return this.state;
   }
 
-  subscribe(listener: Listener): void {
-    this._listeners.push(listener);
-    listener(this.getState());
+  public subscribe(listener: () => void): void {
+    this.listeners.push(listener);
   }
 
-  unsubscribe(listener: Listener): void {
-    this._listeners = this._listeners.filter((l) => l !== listener);
+  public unsubscribe(listener: () => void): void {
+    this.listeners = this.listeners.filter(l => l !== listener);
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(listener => listener());
   }
 }
 

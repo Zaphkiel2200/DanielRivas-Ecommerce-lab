@@ -1,24 +1,17 @@
-export interface Action {
-  type: string;
-  payload?: object | number | string;
-}
+type Callback = (action: any) => void;
 
-export class Dispatcher {
-  private _listeners: Array<(action: Action) => void>;
+class DispatcherClass {
+  private callbacks: Callback[] = [];
 
-  constructor() {
-    this._listeners = [];
+  register(callback: Callback): void {
+    this.callbacks.push(callback);
   }
 
-  register(callback: (action: Action) => void): void {
-    this._listeners.push(callback);
-  }
-
-  dispatch(action: Action): void {
-    for (const listener of this._listeners) {
-      listener(action);
-    }
+  dispatch(action: any): void {
+    this.callbacks.forEach(callback => {
+      callback(action);
+    });
   }
 }
 
-export const AppDispatcher = new Dispatcher();
+export const Dispatcher = new DispatcherClass();
