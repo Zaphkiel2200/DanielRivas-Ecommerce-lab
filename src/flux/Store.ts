@@ -6,7 +6,6 @@ class Store {
   private listeners: (() => void)[] = [];
 
   constructor() {
-    // Inicialización correcta del estado con todos los campos requeridos
     this.state = {
       animes: [],
       cart: JSON.parse(localStorage.getItem('cart') || '[]'),
