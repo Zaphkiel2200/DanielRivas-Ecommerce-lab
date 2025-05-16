@@ -288,8 +288,6 @@
     "vary": "^1.1.2",
     "watchpack": "^2.4.2",
     "wbuf": "^1.7.3",
-    "webpack": "^5.99.8",
-    "webpack-cli": "^6.0.1",
     "webpack-dev-middleware": "^7.4.2",
     "webpack-dev-server": "^5.2.1",
     "webpack-merge": "^6.0.1",
@@ -306,7 +304,9 @@
     "zod-to-json-schema": "^3.24.5"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",           
+    "dev": "webpack serve --open",    
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -317,5 +317,9 @@
   "bugs": {
     "url": "https://github.com/Zaphkiel2200/DanielRivas-Ecommerce-lab/issues"
   },
-  "homepage": "https://github.com/Zaphkiel2200/DanielRivas-Ecommerce-lab#readme"
+  "homepage": "https://github.com/Zaphkiel2200/DanielRivas-Ecommerce-lab#readme",
+  "devDependencies": {
+    "webpack": "^5.99.8",
+    "webpack-cli": "^6.0.1"
+  }
 }
