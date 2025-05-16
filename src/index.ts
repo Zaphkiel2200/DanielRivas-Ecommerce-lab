@@ -1,15 +1,20 @@
 import Root from "./Root/Root";
-import CardContainer from "./components/CardContainer";
+import AnimeCatalog from "./components/AnimeCatalog";
 import AnimeCard from "./components/AnimeCard";
-import YourAnimes from "./components/YourAnimes";
-import Cart from "./components/Cart"; 
-import BrowseAnimes from "./components/BrowseAnimes"; 
-import AdminModifyAnimes from "./components/AdminModifyAnimes";
+import Cart from "./components/Cart";
 
 customElements.define("root-element", Root);
-customElements.define("card-container", CardContainer);
+customElements.define("anime-catalog", AnimeCatalog);
 customElements.define("anime-card", AnimeCard);
-customElements.define("your-animes", YourAnimes);
-customElements.define("anime-cart", Cart); 
-customElements.define("browse-animes", BrowseAnimes); 
-customElements.define("admin-modify-animes", AdminModifyAnimes);
+customElements.define("shopping-cart", Cart);
+
+const styleLink = document.createElement("link");
+styleLink.rel = "stylesheet";
+styleLink.href = "/styles/styles.css";
+document.head.appendChild(styleLink);
+
+document.body.innerHTML = "<root-element></root-element>";
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("App initialized");
+});

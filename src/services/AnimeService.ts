@@ -2,7 +2,6 @@ import { Anime } from "../types/types";
 
 export async function getAnimes(): Promise<Anime[]> {
   try {
-    // Cache with Timestamp
     const cachedAnimes = localStorage.getItem('cached_animes');
     const lastFetch = localStorage.getItem('last_fetch');
     
@@ -10,7 +9,6 @@ export async function getAnimes(): Promise<Anime[]> {
       return JSON.parse(cachedAnimes);
     }
     
-    // Network request to Jikan API
     const response = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
     if (!response.ok) throw new Error('Error fetching animes');
     
@@ -19,7 +17,7 @@ export async function getAnimes(): Promise<Anime[]> {
       id: item.mal_id,
       title: item.title,
       image: item.images?.jpg?.image_url || '',
-      price: Math.floor(Math.random() * 50) + 10, // Precio aleatorio entre 10 y 60
+      price: Math.floor(Math.random() * 50) + 10, 
       rating: item.score,
       description: item.synopsis || 'No description available',
       episodes: item.episodes || 0
