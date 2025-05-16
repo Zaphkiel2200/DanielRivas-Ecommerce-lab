@@ -64,5 +64,8 @@ module.exports = {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist'),
     },
-    mode: 'development'
+    devServer: {
+        port: 8082,
+    },
+    mode: 'development',
 };
